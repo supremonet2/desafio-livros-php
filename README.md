@@ -60,3 +60,22 @@ As migrations criam as três tabelas principais e duas tabelas de vínculo:
 | `Livro_Assunto` | Chave composta por `Livro_Codl` e `Assunto_CodAs`, com chaves estrangeiras |
 
 A migration `2026_10_07_190636_create_relatorio_livros_por_autor_view.php` cria a view `vw_relatorio_livros_por_autor`. Ela reúne os dados das três tabelas principais por meio das duas tabelas de vínculo. O projeto não utiliza procedures nem triggers. As outras migrations criam tabelas de suporte do Laravel.
+
+## Testes e SonarQube
+
+Os testes automatizados usam SQLite em memória e não alteram o banco MySQL da aplicação:
+
+```bash
+php artisan test
+```
+
+Para enviar cobertura ao SonarQube, instale e habilite PCOV ou Xdebug no PHP CLI. Com PCOV ativo, gere os relatórios antes de executar o SonarScanner no mesmo checkout:
+
+```bash
+php -d pcov.enabled=1 vendor/bin/phpunit --coverage-clover=coverage.xml --log-junit=junit.xml
+sonar-scanner
+```
+
+Configure `SONAR_HOST_URL` e `SONAR_TOKEN` no ambiente do scanner; não grave o token no repositório. Os arquivos `coverage.xml` e `junit.xml` são temporários e ignorados pelo Git. O scanner lê seus caminhos em `sonar-project.properties`.
+
+A métrica de cobertura se refere ao código PHP em `app/`, que é exercitado pela suíte PHPUnit. Configuração, migrations, seeders, rotas e JavaScript continuam sujeitos às demais análises, mas não entram nessa métrica; ainda não há testes automatizados de cobertura para o JavaScript. Configuração padrão e migrations ficam fora apenas da medição de duplicação, pois repetem estruturas necessárias ao esquema. Essas escolhas de escopo estão explícitas em `sonar-project.properties`.
