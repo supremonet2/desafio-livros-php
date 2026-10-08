@@ -2,6 +2,8 @@
 
 Este arquivo registra a construção do projeto e as pendências para a apresentação do desafio. Inclui os pontos adicionais do e-mail de convite. Estado conferido no código em 8 de outubro de 2026; prazo informado: **09/10/2026**.
 
+Repositório: [desafio-livros-php no GitHub](https://github.com/supremonet2/desafio-livros-php).
+
 ## Etapas realizadas
 
 1. **Análise do desafio e do DER:** identificação dos CRUDs de Livro, Autor e Assunto, das relações muitos-para-muitos, do campo de valor em reais e do relatório agrupado por autor a partir de uma view do banco.

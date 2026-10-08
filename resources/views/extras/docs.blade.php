@@ -7,6 +7,9 @@
         <span class="fs-4">Documentação do projeto</span>
         <div class="d-flex flex-wrap align-items-center gap-2 ms-auto">
             <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modal_backlog">Backlog</button>
+            <a href="https://github.com/supremonet2/desafio-livros-php" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
+                <i class="bi bi-github me-1" aria-hidden="true"></i> Repositório no GitHub
+            </a>
             <a href="{{ url('/livros') }}" class="btn btn-outline-primary btn-sm">Abrir painel</a>
         </div>
     </header>
