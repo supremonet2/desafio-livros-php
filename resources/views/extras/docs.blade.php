@@ -25,7 +25,7 @@
                 <li class="list-group-item">Na aba <strong>Cadastros</strong>, registre primeiro os autores e assuntos com seus códigos.</li>
                 <li class="list-group-item">Na aba <strong>Livros</strong>, informe os dados do livro e selecione um ou mais autores e assuntos.</li>
                 <li class="list-group-item">Use os controles da lista para editar ou excluir um cadastro.</li>
-                <li class="list-group-item">Na aba <strong>Relatório</strong>, filtre pelo nome do autor, se desejar, e clique em <strong>Buscar</strong>.</li>
+                <li class="list-group-item">Na aba <strong>Relatório</strong>, filtre pelo nome do autor, se desejar, e clique em <strong>Buscar</strong>. Quando houver resultados, use o ícone <strong>PDF</strong> para baixar o mesmo relatório.</li>
             </ol>
         </section>
 
@@ -69,10 +69,16 @@
             </div>
         </section>
 
+        <section id="relatorio" class="py-5 border-bottom" aria-labelledby="titulo-relatorio">
+            <h2 id="titulo-relatorio" class="h3 mb-3">Relatório por autor</h2>
+            <p>A busca na tela e o PDF consultam a view <code>vw_relatorio_livros_por_autor</code>. O servidor aplica o filtro de autor e agrupa os livros por autor, incluindo um livro no grupo de cada autor vinculado a ele. Os assuntos de cada livro são reunidos na mesma linha.</p>
+            <p class="mb-0">O botão de PDF só aparece após uma busca com resultados. Ao clicar, a aplicação consulta novamente a view com o mesmo filtro e gera o arquivo com DomPDF; não usa uma cópia dos dados da tabela HTML.</p>
+        </section>
+
 
         <section id="instalacao" class="" aria-labelledby="titulo-instalacao">
             <h2 id="titulo-instalacao" class="h3 mb-3">Instalação local</h2>
-            <p>Com PHP 8.3 ou superior, Composer e MySQL disponíveis, instale as dependências e prepare o ambiente na raiz do projeto:</p>
+            <p>Com PHP 8.3 ou superior, Composer e MySQL disponíveis, instale as dependências, incluindo <code>barryvdh/laravel-dompdf</code>, e prepare o ambiente na raiz do projeto:</p>
             <pre class="bg-body-tertiary border rounded-3 p-3 overflow-auto"><code>composer install
 cp -n .env.example .env</code></pre>
             <p>Se o arquivo <code>.env</code> foi criado agora, gere a chave da aplicação:</p>

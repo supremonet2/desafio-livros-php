@@ -125,9 +125,12 @@
             </div>
 
             <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-                <form id="formRelatorio" class="input-group mb-3" style="max-width: 28rem">
+                <form id="formRelatorio" class="input-group mb-3" style="max-width: 32rem" data-pdf-url="{{ route('relatorio.livros.pdf') }}">
                     <input type="search" name="autor" placeholder="Buscar por autor" class="form-control" id="buscar_relatorio" aria-label="Buscar por autor">
                     <button id="botaoBuscarRelatorio" class="btn btn-outline-secondary" type="submit">Buscar</button>
+                    <a id="linkRelatorioPdf" class="btn btn-outline-danger d-none" href="#" title="Baixar relatório em PDF" aria-label="Baixar relatório em PDF">
+                        <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> PDF
+                    </a>
                 </form>
                 <div id="erroRelatorio" class="text-danger mb-2" role="alert" aria-live="polite"></div>
 

@@ -63,6 +63,26 @@ class RelatorioLivrosPorAutorTest extends TestCase
             ->assertSeeText('Clique em Buscar para carregar o relatório.');
     }
 
+    public function test_pdf_report_downloads_after_querying_the_report_view(): void
+    {
+        $this->createReportData();
+
+        $response = $this->get('/relatorio/livros/pdf?autor=Ray');
+
+        $response->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf')
+            ->assertHeader('Content-Disposition', 'attachment; filename=relatorio-livros-por-autor.pdf');
+
+        $this->assertStringStartsWith('%PDF-', $response->getContent());
+    }
+
+    public function test_pdf_report_rejects_an_invalid_author_filter(): void
+    {
+        $this->getJson('/relatorio/livros/pdf?autor='.str_repeat('a', 41))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('autor');
+    }
+
     private function createReportData(): void
     {
         DB::table('livros')->insert([

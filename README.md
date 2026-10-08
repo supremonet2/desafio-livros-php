@@ -7,6 +7,7 @@ Aplicação web do desafio técnico de PHP para cadastrar, consultar, editar e e
 - PHP 8.3 ou superior e Laravel 13 para rotas, validação, persistência e API.
 - MySQL para a aplicação.
 - Blade, Bootstrap 5, Bootstrap Icons, jQuery e Tom Select para a interface. O layout atual carrega essas bibliotecas por CDN.
+- `barryvdh/laravel-dompdf` para gerar o relatório em PDF a partir de uma view Blade.
 
 ## Instalação local com MySQL
 
@@ -61,21 +62,8 @@ As migrations criam as três tabelas principais e duas tabelas de vínculo:
 
 A migration `2026_10_07_190636_create_relatorio_livros_por_autor_view.php` cria a view `vw_relatorio_livros_por_autor`. Ela reúne os dados das três tabelas principais por meio das duas tabelas de vínculo. O projeto não utiliza procedures nem triggers. As outras migrations criam tabelas de suporte do Laravel.
 
-## Testes e SonarQube
+## Relatório em PDF
 
-Os testes automatizados usam SQLite em memória e não alteram o banco MySQL da aplicação:
+Na aba **Relatório**, clique em **Buscar** para consultar a view do banco. Quando a busca trouxer livros, o ícone **PDF** fica disponível. Ele faz uma nova consulta à mesma view, aplica o filtro de autor da busca e baixa `relatorio-livros-por-autor.pdf`. O documento é renderizado pela Blade `resources/views/extras/relatorio.blade.php` e apresenta livros e assuntos agrupados por autor. Um livro ligado a dois autores aparece no grupo de ambos.
 
-```bash
-php artisan test
-```
-
-Para enviar cobertura ao SonarQube, instale e habilite PCOV ou Xdebug no PHP CLI. Com PCOV ativo, gere os relatórios antes de executar o SonarScanner no mesmo checkout:
-
-```bash
-php -d pcov.enabled=1 vendor/bin/phpunit --coverage-clover=coverage.xml --log-junit=junit.xml
-sonar-scanner
-```
-
-Configure `SONAR_HOST_URL` e `SONAR_TOKEN` no ambiente do scanner; não grave o token no repositório. Os arquivos `coverage.xml` e `junit.xml` são temporários e ignorados pelo Git. O scanner lê seus caminhos em `sonar-project.properties`.
-
-A métrica de cobertura se refere ao código PHP em `app/`, que é exercitado pela suíte PHPUnit. Configuração, migrations, seeders, rotas e JavaScript continuam sujeitos às demais análises, mas não entram nessa métrica; ainda não há testes automatizados de cobertura para o JavaScript. Configuração padrão e migrations ficam fora apenas da medição de duplicação, pois repetem estruturas necessárias ao esquema. Essas escolhas de escopo estão explícitas em `sonar-project.properties`.
+A rota de download é `GET /relatorio/livros/pdf?autor=nome`. O filtro `autor` é opcional e limitado a 40 caracteres. Execute `composer install` para instalar a biblioteca antes de usar a rota.

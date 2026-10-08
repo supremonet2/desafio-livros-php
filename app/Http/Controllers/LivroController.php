@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateLivroRequest;
 use App\Models\Assunto;
 use App\Models\Autor;
 use App\Models\Livro;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -98,11 +99,28 @@ class LivroController extends Controller
 
     public function buscarRelatorio(Request $request)
     {
+        $termoAutor = $this->termoAutorRelatorio($request);
+        return response()->json(['data' => $this->consultarRelatorio($termoAutor)]);
+    }
+
+    public function baixarRelatorioPdf(Request $request)
+    {
+        $termoAutor = $this->termoAutorRelatorio($request);
+        return Pdf::loadView('extras.relatorio', [
+            'relatorio' => $this->consultarRelatorio($termoAutor),
+            'termoAutor' => $termoAutor,
+        ])->setPaper('a4', 'landscape')->download('relatorio-livros-por-autor.pdf');
+    }
+
+    private function termoAutorRelatorio(Request $request): string
+    {
         $request->validate(['autor' => ['nullable', 'string', 'max:40']]);
-
         $termoAutor = $request->query('autor');
-        $termoAutor = is_string($termoAutor) ? trim($termoAutor) : '';
+        return is_string($termoAutor) ? trim($termoAutor) : '';
+    }
 
+    private function consultarRelatorio(string $termoAutor): Collection
+    {
         $linhasRelatorio = DB::table('vw_relatorio_livros_por_autor')
             ->when($termoAutor !== '', fn($query) => $query->where('autor_nome', 'like', '%' . $termoAutor . '%'))
             ->orderBy('autor_nome')
@@ -110,7 +128,7 @@ class LivroController extends Controller
             ->orderBy('assunto_descricao')
             ->get();
 
-        $relatorio = $linhasRelatorio->groupBy('autor_codigo')->map(function (Collection $linhasAutor): array {
+        return $linhasRelatorio->groupBy('autor_codigo')->map(function (Collection $linhasAutor): array {
             return [
                 'nome' => $linhasAutor->first()->autor_nome,
                 'livros' => $linhasAutor->groupBy('livro_codigo')->map(function (Collection $linhasLivro): array {
@@ -127,10 +145,7 @@ class LivroController extends Controller
                 })->values(),
             ];
         })->values();
-
-        return response()->json(['data' => $relatorio]);
     }
-
 
     // -- Pagimnas extras --
     public function home()

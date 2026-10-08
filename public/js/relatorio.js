@@ -7,8 +7,13 @@ $(function () {
 
     const resultados = $('#resultadosRelatorio');
     const botao = $('#botaoBuscarRelatorio');
+    const linkPdf = $('#linkRelatorioPdf');
     const erros = $('#erroRelatorio');
     const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    form.find('input[name="autor"]').on('input', function () {
+        linkPdf.addClass('d-none').attr('href', '#');
+    });
 
     function mensagem(texto) {
         resultados.empty().append($('<tr>').append($('<td>', { colspan: 6 }).text(texto)));
@@ -22,15 +27,23 @@ $(function () {
         }
 
         botao.prop('disabled', true);
+        linkPdf.addClass('d-none').attr('href', '#');
         erros.text('');
         mensagem('Buscando relatório...');
+
+        const filtro = form.serialize();
 
         $.ajax({
             url: '/api/relatorio/livros',
             method: 'GET',
-            data: form.serialize(),
+            data: filtro,
             dataType: 'json',
             success: function (response) {
+                if (form.serialize() !== filtro) {
+                    mensagem('Filtro alterado. Clique em Buscar novamente.');
+                    return;
+                }
+
                 const grupos = response.data;
 
                 if (!grupos.length) {
@@ -65,8 +78,15 @@ $(function () {
                         resultados.append(linha);
                     });
                 });
+
+                linkPdf.attr('href', form.data('pdf-url') + '?' + filtro).removeClass('d-none');
             },
             error: function (xhr) {
+                if (form.serialize() !== filtro) {
+                    mensagem('Filtro alterado. Clique em Buscar novamente.');
+                    return;
+                }
+
                 mensagem('Não foi possível carregar o relatório.');
                 const validacao = xhr.responseJSON?.errors;
                 erros.text(validacao ? Object.values(validacao).flat().join(' ') : 'Tente novamente.');
